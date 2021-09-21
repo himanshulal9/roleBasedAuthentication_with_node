@@ -2,18 +2,21 @@ const express = require("express");
 const createHttpErrors = require("http-errors");
 const morgan = require("morgan");
 const mongoose = require("mongoose");
-
 const PORT = process.env.PORT || 4000;
+const IndexRouter = require("./routes/index.route");
+const AuthRouter = require("./routes/auth.route");
+const UserRouter = require("./routes/user.route");
+
 require("dotenv").config();
-
 const app = express();
-
 app.use(morgan("dev"));
+app.set("view engine", "ejs");
+app.use(express.static("public"));
 
 //defining Routes
-app.get("/", (req, res, next) => {
-  res.send("working");
-});
+app.use("/", IndexRouter);
+app.use("/auth", AuthRouter);
+app.use("/user", UserRouter);
 
 //error handling in the requests
 app.use((req, res, next) => {
