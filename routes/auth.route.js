@@ -1,3 +1,5 @@
+const { User } = require("../models/user.model");
+
 const router = require("express").Router();
 
 router.get("/login", async (req, res, next) => {
@@ -13,7 +15,22 @@ router.post("/login", async (req, res, next) => {
 });
 
 router.post("/register", async (req, res, next) => {
-  res.render("register");
+  try {
+    //checking unique user in database.
+    const { email } = req.body;
+    const doesExist = await User.findOne({ email });
+    if (doesExist) {
+      res.redirect("/auth/register");
+      return;
+    }
+    // if user does not exit
+    const user = new User(req.body);
+    await user.save();
+
+    res.send(user);
+  } catch (error) {
+    next(error);
+  }
 });
 
 router.get("/logout", async (req, res, next) => {

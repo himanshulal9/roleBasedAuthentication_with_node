@@ -6,12 +6,14 @@ const PORT = process.env.PORT || 4000;
 const IndexRouter = require("./routes/index.route");
 const AuthRouter = require("./routes/auth.route");
 const UserRouter = require("./routes/user.route");
-
 require("dotenv").config();
+
 const app = express();
 app.use(morgan("dev"));
 app.set("view engine", "ejs");
 app.use(express.static("public"));
+app.use(express.json());
+app.use(express.urlencoded({ extended: false }));
 
 //defining Routes
 app.use("/", IndexRouter);
@@ -26,6 +28,7 @@ app.use((req, res, next) => {
 app.use((req, res, next) => {
   error.status = error.status || 500;
   res.status(error.status);
+  res.render("error_40x", { error });
   res.send(error);
 });
 
